@@ -1,17 +1,17 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import PomodoroTimer from './PomodoroTimerScreen';
-import ScreenB from './TaskListScreen';
-import ScreenC from './StatsScreen';
+import PomodoroTimerScreen from './PomodoroTimerScreen';
+import TaskListScreen from './TaskListScreen';
+import StatsScreen from './StatsScreen';
 
 const Stack = createNativeStackNavigator();
 
 function AppNavigator() {
     return (
         <Stack.Navigator initialRouteName='ScreenA'>
-            <Stack.Screen name="Pomodoro Timer" component={PomodoroTimer} />
-            <Stack.Screen name='ScreenB' component={ScreenB} />
-            <Stack.Screen name='ScreenC' component={ScreenC} />
+            <Stack.Screen name="PomodoroTimerScreen" component={PomodoroTimerScreen} />
+            <Stack.Screen name='TaskListScreen' component={TaskListScreen} />
+            <Stack.Screen name='StatsScreen' component={StatsScreen} />
         </Stack.Navigator>
     );
 }

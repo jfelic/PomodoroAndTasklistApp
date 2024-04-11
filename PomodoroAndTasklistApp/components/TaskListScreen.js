@@ -1,15 +1,11 @@
 import React from 'react';
 import { View, Text } from 'react-native';
+import NavigationBar from './NavigationBar';
 
-export default function TaskListScreen() {
-    <View style={{
-        flex: 1,
-        backgroundColor: 'red',
-    }}>
-        <Text style={{
-            fontSize: '100px',
-        }}>
-            TaskListScreen
-        </Text>
-    </View>
+export default function TaskListScreen({navigation}) {
+    return (
+        <View>
+            <NavigationBar navigation={navigation} />
+        </View>
+    );
 }
