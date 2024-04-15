@@ -5,19 +5,19 @@ export default function NavigationBar( {navigation} ) {
     return (
         <View style={style.navContainer}>
             <TouchableOpacity 
-                onPress={() => navigation.navigate('PomodoroTimerScreen')}
+                onPress={() => navigation.navigate('Pomodoro Timer')}
                 style={style.button}>
-                    <Text style={style.buttonText}>Home</Text>
+                    <Text style={style.buttonText}>Timer</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
-                onPress={() => navigation.navigate('TaskListScreen')}
+                onPress={() => navigation.navigate('Tasks')}
                 style={style.button}>
                     <Text style={style.buttonText}>Tasks</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
-                onPress= {() => navigation.navigate('StatsScreen')}
+                onPress= {() => navigation.navigate('Statistics')}
                 style={style.button}>
                     <Text style={style.buttonText}>Stats</Text>
             </TouchableOpacity>
@@ -29,7 +29,7 @@ const style = StyleSheet.create({
     navContainer: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
-        backgroundColor: '#f0f0f0', // A light grey background
+        backgroundColor: 'green', // A light grey background
         paddingBottom: 20, // Space from the bottom
         paddingTop: 10, // Space from the top
         shadowOpacity: 0.1, // Optional: Shadow for iOS
