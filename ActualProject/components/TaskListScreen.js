@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, TextInput, Button, StyleSheet, DatePickerAndroid, Touchable } from 'react-native';
 import NavigationBar from './NavigationBar';
 import RNPickerSelect from 'react-native-picker-select';
+import DatePicker from 'react-native-date-picker';
 
 
 
 const TaskItem = ({ task, onPress }) => {
     return (
         <TouchableOpacity onPress={() => onPress(task.id)} style={styles.taskItem}>
-            <Text style={styles.taskText}>{task.title} - {task.priority} - Due: {task.dueDate.toDateString()}</Text>
+            <Text style={styles.taskText}>{task.priority} - {task.title} - Due: {task.dueDate.toDateString()}</Text>
             <Text style={styles.taskText}>{task.description}</Text>
         </TouchableOpacity>
     );
@@ -16,17 +17,13 @@ const TaskItem = ({ task, onPress }) => {
 
 export default function TaskListScreen({ navigation }) {
     const [tasks, setTasks] = useState([
-        { id: '', 
-        title: '', 
-        description: '', 
-        dueDate: new Date(), 
-        priority: '', 
-        completed: false },
+        //this is what renders the tasks. 
+        //tasks is an array of objects
     ]);
 
     const [newTaskTitle, setNewTaskTitle] = useState('');
     const [newTaskDescription, setNewTaskDescription] = useState('');
-    const [newTaskPriority, setNewTaskPriority] = useState(1);
+    const [newTaskPriority, setNewTaskPriority] = useState('');
     const [newTaskDueDate, setNewTaskDueDate] = useState(new Date());
 
     const handlePress = (taskId) => {
@@ -34,38 +31,45 @@ export default function TaskListScreen({ navigation }) {
     };
 
     const addTask = () => {
-        const newId = tasks.length + 1; // Simple ID generation strategy
+        const newId = tasks.length + 1; // Simple ID generation strategy. Won't work once delete is implemented
         const newTask = {
-            id: newId.toString(),
+            id: newId,
             title: newTaskTitle,
             description: newTaskDescription,
             dueDate: newTaskDueDate,
             priority: newTaskPriority,
             completed: false,
         };
-        setTasks([...tasks, newTask]);
+        
+        //Reset input fields after adding a new task
+        setTasks([...tasks, newTask]);//append new task
         setNewTaskTitle('');
         setNewTaskDescription('');
-        setNewTaskPriority(1);
+        setNewTaskPriority('');
         setNewTaskDueDate(new Date());
     };
 
     const renderTaskInputFields = () => {
         return (
             <View>
+                <Text style={styles.inputTitle}>Title:</Text>
                 <TextInput
-                    placeholder="Title"
+                    textAlign='center'
+                    title="Title:"
                     value={newTaskTitle}
                     onChangeText={setNewTaskTitle}
                     style={styles.input}
                 />
+
+                <Text style={styles.inputTitle}>Description:</Text>
                 <TextInput
-                    placeholder="Description"
+                    textAlign='center'
                     value={newTaskDescription}
                     onChangeText={setNewTaskDescription}
                     style={styles.input}
                 />
 
+                <Text style={styles.inputTitle}>Priority:</Text>
                 <RNPickerSelect 
                     onValueChange={(value) => setNewTaskPriority(value)}
                     items={[
@@ -76,9 +80,15 @@ export default function TaskListScreen({ navigation }) {
                     placeholder={{
                         label: '',
                         value: null,
-                        color: 'black',
                     }}
                     style={styles.picker}
+                />
+
+                {/* Add Due Date fuctionality here */}
+                <DatePicker
+                    date={newTaskDueDate}
+                    onDateChange={setNewTaskDueDate}
+                    mode='date'
                 />
 
                 <TouchableOpacity onPress={addTask}>
@@ -111,8 +121,9 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
     },
-    taskText: {
+    inputTitle: {
         fontSize: 18,
+        marginLeft: 15,
     },
     input: {
         borderWidth: 1,

@@ -29,7 +29,7 @@ const style = StyleSheet.create({
     navContainer: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
-        backgroundColor: 'green', // A light grey background
+        backgroundColor: 'white', // A light grey background
         paddingBottom: 20, // Space from the bottom
         paddingTop: 10, // Space from the top
         shadowOpacity: 0.1, // Optional: Shadow for iOS
