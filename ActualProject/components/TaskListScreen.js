@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, TextInput, Button, StyleSheet, DatePickerAndroid, Touchable } from 'react-native';
 import NavigationBar from './NavigationBar';
-import RNPickerSelect from 'react-native-picker-select';
-import DatePicker from 'react-native-date-picker';
+import PickerSelect from 'react-native-picker-select';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 
 
@@ -52,6 +53,8 @@ export default function TaskListScreen({ navigation }) {
     const renderTaskInputFields = () => {
         return (
             <View>
+
+                {/* Title input */}
                 <Text style={styles.inputTitle}>Title:</Text>
                 <TextInput
                     textAlign='center'
@@ -61,6 +64,7 @@ export default function TaskListScreen({ navigation }) {
                     style={styles.input}
                 />
 
+                {/* Description Input */}
                 <Text style={styles.inputTitle}>Description:</Text>
                 <TextInput
                     textAlign='center'
@@ -69,8 +73,9 @@ export default function TaskListScreen({ navigation }) {
                     style={styles.input}
                 />
 
+                {/* Priority Selection */}
                 <Text style={styles.inputTitle}>Priority:</Text>
-                <RNPickerSelect 
+                <PickerSelect
                     onValueChange={(value) => setNewTaskPriority(value)}
                     items={[
                         {label: "Low", value: 3},
@@ -84,13 +89,10 @@ export default function TaskListScreen({ navigation }) {
                     style={styles.picker}
                 />
 
-                {/* Add Due Date fuctionality here */}
-                <DatePicker
-                    date={newTaskDueDate}
-                    onDateChange={setNewTaskDueDate}
-                    mode='date'
-                />
+                {/* Due Date */}
+                <DateTimePicker value={new Date()} />
 
+                {/* Add Task Button */}
                 <TouchableOpacity onPress={addTask}>
                     <Text style={styles.button}>Add Task</Text>
                 </TouchableOpacity>
