@@ -8,7 +8,7 @@ const Stack = createNativeStackNavigator();
 
 function AppNavigator() {
     return (
-        <Stack.Navigator initialRouteName='ScreenA'>
+        <Stack.Navigator initialRouteName='Pomodoro Timer'>
             <Stack.Screen name="Pomodoro Timer" component={PomodoroTimerScreen} />
             <Stack.Screen name='Tasks' component={TaskListScreen} />
             <Stack.Screen name='Statistics' component={StatsScreen} />
