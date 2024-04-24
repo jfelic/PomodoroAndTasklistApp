@@ -16,11 +16,6 @@ export default function NavigationBar( {navigation} ) {
                     <Text style={style.buttonText}>Tasks</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
-                onPress= {() => navigation.navigate('Statistics')}
-                style={style.button}>
-                    <Text style={style.buttonText}>Stats</Text>
-            </TouchableOpacity>
         </View>
     );
 }
