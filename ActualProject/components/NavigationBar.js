@@ -29,6 +29,7 @@ const style = StyleSheet.create({
     navContainer: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
+        alignItems: "flex-end",
         backgroundColor: 'white', // A light grey background
         paddingBottom: 20, // Space from the bottom
         paddingTop: 10, // Space from the top

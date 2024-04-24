@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, TextInput, Button, StyleSheet, DatePickerAndroid, Touchable } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import NavigationBar from './NavigationBar';
 import PickerSelect from 'react-native-picker-select';
 import DateTimePicker from '@react-native-community/datetimepicker';
-
-
 
 
 const TaskItem = ({ task, onPress }) => {
@@ -17,10 +16,22 @@ const TaskItem = ({ task, onPress }) => {
 };
 
 export default function TaskListScreen({ navigation }) {
-    const [tasks, setTasks] = useState([
-        //this is what renders the tasks. 
-        //tasks is an array of objects
-    ]);
+    const [tasks, setTasks] = useState([]);
+
+    // Load tasks from AsyncStorage when the component mounts
+    useEffect(() => {
+        const loadTasks = async () => {
+            const savedTasks = await AsyncStorage.getItem('tasks');
+            const tasks = savedTasks ? JSON.parse(savedTasks) : [];
+            // Convert string dates back to Date objects
+            tasks.forEach(task => {
+                task.dueDate = new Date(task.dueDate);
+            });
+            setTasks(tasks);
+        };
+
+        loadTasks();
+    }, []);
 
     const [newTaskTitle, setNewTaskTitle] = useState('');
     const [newTaskDescription, setNewTaskDescription] = useState('');
@@ -31,7 +42,7 @@ export default function TaskListScreen({ navigation }) {
         console.log("Pressed task: ", taskId);
     };
 
-    const addTask = () => {
+    const addTask = async () => {
         const newId = tasks.length + 1; // Simple ID generation strategy. Won't work once delete is implemented
         const newTask = {
             id: newId,
@@ -41,9 +52,12 @@ export default function TaskListScreen({ navigation }) {
             priority: newTaskPriority,
             completed: false,
         };
-        
+
+        const updatedTasks = [...tasks, newTask];
+        setTasks(updatedTasks);
+        await AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
+
         //Reset input fields after adding a new task
-        setTasks([...tasks, newTask]);//append new task
         setNewTaskTitle('');
         setNewTaskDescription('');
         setNewTaskPriority('');
