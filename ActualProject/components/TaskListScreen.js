@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 import NavigationBar from './NavigationBar';
 import PickerSelect from 'react-native-picker-select';
 import DateTimePicker from '@react-native-community/datetimepicker';
-
 
 const TaskItem = ({ task, onPress }) => {
     return (
@@ -18,20 +18,20 @@ const TaskItem = ({ task, onPress }) => {
 export default function TaskListScreen({ navigation }) {
     const [tasks, setTasks] = useState([]);
 
-    // Load tasks from AsyncStorage when the component mounts
-    useEffect(() => {
-        const loadTasks = async () => {
-            const savedTasks = await AsyncStorage.getItem('tasks');
-            const tasks = savedTasks ? JSON.parse(savedTasks) : [];
-            // Convert string dates back to Date objects
-            tasks.forEach(task => {
-                task.dueDate = new Date(task.dueDate);
-            });
-            setTasks(tasks);
-        };
+    const loadTasks = async () => {
+        const savedTasks = await AsyncStorage.getItem('tasks');
+        const tasks = savedTasks ? JSON.parse(savedTasks) : [];
+        tasks.forEach(task => {
+            task.dueDate = new Date(task.dueDate);
+        });
+        setTasks(tasks);
+    };
 
-        loadTasks();
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            loadTasks();
+        }, [])
+    );
 
     const [newTaskTitle, setNewTaskTitle] = useState('');
     const [newTaskDescription, setNewTaskDescription] = useState('');
@@ -39,7 +39,10 @@ export default function TaskListScreen({ navigation }) {
     const [newTaskDueDate, setNewTaskDueDate] = useState(new Date());
 
     const handlePress = (taskId) => {
-        console.log("Pressed task: ", taskId);
+        const task = tasks.find(t => t.id === taskId);
+        if (task) {
+            navigation.navigate('Edit Task', { task });
+        }
     };
 
     const addTask = async () => {
@@ -57,7 +60,7 @@ export default function TaskListScreen({ navigation }) {
         setTasks(updatedTasks);
         await AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
 
-        //Reset input fields after adding a new task
+        // Reset input fields after adding a new task
         setNewTaskTitle('');
         setNewTaskDescription('');
         setNewTaskPriority('');
@@ -67,8 +70,6 @@ export default function TaskListScreen({ navigation }) {
     const renderTaskInputFields = () => {
         return (
             <View>
-
-                {/* Title input */}
                 <Text style={styles.inputTitle}>Title:</Text>
                 <TextInput
                     textAlign='center'
@@ -78,7 +79,6 @@ export default function TaskListScreen({ navigation }) {
                     style={styles.input}
                 />
 
-                {/* Description Input */}
                 <Text style={styles.inputTitle}>Description:</Text>
                 <TextInput
                     textAlign='center'
@@ -87,7 +87,6 @@ export default function TaskListScreen({ navigation }) {
                     style={styles.input}
                 />
 
-                {/* Priority Selection */}
                 <Text style={styles.inputTitle}>Priority:</Text>
                 <PickerSelect
                     onValueChange={(value) => setNewTaskPriority(value)}
@@ -103,12 +102,10 @@ export default function TaskListScreen({ navigation }) {
                     style={styles.picker}
                 />
 
-                {/* Due Date */}
-                <DateTimePicker value={new Date()} />
+                <DateTimePicker value={newTaskDueDate} onChange={(event, selectedDate) => setNewTaskDueDate(selectedDate || newTaskDueDate)} />
 
-                {/* Add Task Button */}
-                <TouchableOpacity onPress={addTask}>
-                    <Text style={styles.button}>Add Task</Text>
+                <TouchableOpacity onPress={addTask} style={styles.button}>
+                    <Text style={styles.buttonText}>Add Task</Text>
                 </TouchableOpacity>
             </View>
         );
@@ -120,64 +117,92 @@ export default function TaskListScreen({ navigation }) {
             <FlatList
                 data={tasks}
                 renderItem={({ item }) => <TaskItem task={item} onPress={handlePress} />}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item.id.toString()}
             />
             <NavigationBar navigation={navigation} />
         </View>
     );
 }
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: 20,
+        backgroundColor: '#f7f7f7',
     },
     taskItem: {
-        padding: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
+        backgroundColor: '#fff',
+        padding: 20,
+        borderRadius: 10,
+        marginVertical: 10,
+        marginHorizontal: 20,
+        elevation: 2,
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        shadowColor: '#333',
+        shadowOffset: { height: 3, width: 0 },
+    },
+    taskText: {
+        fontSize: 18,
+        color: '#333',
     },
     inputTitle: {
         fontSize: 18,
-        marginLeft: 15,
+        color: '#333',
+        marginBottom: 5,
     },
     input: {
+        backgroundColor: '#fff',
         borderWidth: 1,
-        borderColor: 'black',
-        borderRadius: 5,
-        padding: 10,
-        margin: 10,
-    },
-    button: {
-        backgroundColor: 'blue',
-        padding: 10,
-        margin: 20,
-        borderRadius: 5,
-        alignItems: 'center',
-        color: "white",
-        textAlign: 'center',
+        borderColor: '#ddd',
+        borderRadius: 10,
+        padding: 15,
+        fontSize: 18,
+        marginBottom: 15,
     },
     picker: {
         inputIOS: {
-            fontSize: 16,
-            padding: 10,
+            fontSize: 18,
+            paddingVertical: 15,
+            paddingHorizontal: 10,
             borderWidth: 1,
-            borderColor: 'black',
-            borderRadius: 5,
+            borderColor: '#ddd',
+            borderRadius: 10,
             color: 'black',
             paddingRight: 30,
-            margin: 10,
+            backgroundColor: '#fff',
+            marginBottom: 15,
         },
         inputAndroid: {
-            fontSize: 16,
+            fontSize: 18,
             paddingHorizontal: 10,
             paddingVertical: 8,
-            borderWidth: 0.5,
-            borderColor: 'purple',
-            borderRadius: 8,
+            borderWidth: 1,
+            borderColor: '#ddd',
+            borderRadius: 10,
             color: 'black',
             paddingRight: 30,
-            margin: 10,
+            backgroundColor: '#fff',
+            marginBottom: 15,
         },
+        iconContainer: {
+            top: 10,
+            right: 15,
+        },
+        placeholder: {
+            color: 'gray',
+        },
+    },
+    button: {
+        backgroundColor: '#0275d8', // Bootstrap's 'btn-primary' color
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        elevation: 3,
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 18,
+        fontWeight: 'bold',
     },
 });
