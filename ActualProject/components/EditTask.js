@@ -2,14 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PickerSelect from 'react-native-picker-select';
-
-const priorityOptions = [
-    { label: "High", value: "High" },
-    { label: "Medium", value: "Medium" },
-    { label: "Low", value: "Low" },
-];
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const EditTask = ({ route, navigation }) => {
+    const [isDatePickerVisible, setDatePickerVisible] = useState(false);
     const { task } = route.params;
 
     const [title, setTitle] = useState(task.title);
@@ -75,6 +71,17 @@ const EditTask = ({ route, navigation }) => {
                 value={priority}
                 style={editTaskStyles.picker} />
 
+            {/* Edit date */}
+            <Text style={editTaskStyles.inputTitle}>Edit date:</Text>
+            <DateTimePicker
+                testID="dateTimePicker"
+                value={dueDate}
+                mode="date"
+                display="default"
+                onChange={(event, selectedDate) => {
+                    setDueDate(selectedDate || dueDate);
+                }}
+            />
 
             {/* Save Changes button */}
             <TouchableOpacity onPress={updateTask} style={editTaskStyles.button}>
