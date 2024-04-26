@@ -96,13 +96,16 @@ export default function TaskListScreen({ navigation }) {
                         {label: "High", value: 1},
                     ]}
                     placeholder={{
-                        label: '',
+                        label: 'Choose priority',
                         value: null,
                     }}
                     style={styles.picker}
                 />
 
-                <DateTimePicker value={newTaskDueDate} onChange={(event, selectedDate) => setNewTaskDueDate(selectedDate || newTaskDueDate)} />
+                <View style={styles.dateContainer}>
+                    <Text style={styles.inputTitle}>Choose date: </Text>
+                    <DateTimePicker value={newTaskDueDate} onChange={(event, selectedDate) => setNewTaskDueDate(selectedDate || newTaskDueDate)} />
+                </View>
 
                 <TouchableOpacity onPress={addTask} style={styles.button}>
                     <Text style={styles.buttonText}>Add Task</Text>
@@ -112,6 +115,7 @@ export default function TaskListScreen({ navigation }) {
     };
 
     return (
+    <>
         <View style={styles.container}>
             {renderTaskInputFields()}
             <FlatList
@@ -119,14 +123,18 @@ export default function TaskListScreen({ navigation }) {
                 renderItem={({ item }) => <TaskItem task={item} onPress={handlePress} />}
                 keyExtractor={item => item.id.toString()}
             />
+        </View>
+
+        <View>
             <NavigationBar navigation={navigation} />
         </View>
+    </>
     );
 }
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 20,
+        padding: 20,
         backgroundColor: '#f7f7f7',
     },
     taskItem: {
@@ -193,7 +201,11 @@ const styles = StyleSheet.create({
         },
     },
     button: {
-        backgroundColor: '#0275d8', // Bootstrap's 'btn-primary' color
+        backgroundColor: '#0275d8',
+        marginTop: 30,
+        marginLeft: 30,
+        marginRight: 30,
+        marginBottom: 15,
         padding: 15,
         borderRadius: 10,
         alignItems: 'center',
@@ -205,4 +217,12 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
+    dateContainer: {
+        flexDirection: 'row',
+        alignItem: 'center',
+        justifyContent: 'space-evenly',
+    },
+    dateText: {
+
+    }
 });

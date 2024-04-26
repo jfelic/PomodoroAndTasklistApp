@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import PickerSelect from 'react-native-picker-select';
+
+const priorityOptions = [
+    { label: "High", value: "High" },
+    { label: "Medium", value: "Medium" },
+    { label: "Low", value: "Low" },
+];
 
 const EditTask = ({ route, navigation }) => {
     const { task } = route.params;
@@ -50,11 +57,31 @@ const EditTask = ({ route, navigation }) => {
 
     return (
         <View style={editTaskStyles.container}>
+            {/* Edit title and edit description */}
+            <Text style={editTaskStyles.inputTitle}>Edit Title:</Text>
             <TextInput value={title} onChangeText={setTitle} style={editTaskStyles.input}/>
+            <Text style={editTaskStyles.inputTitle}>Edit Description:</Text>
+
+            {/* Edit priority */}
             <TextInput value={description} onChangeText={setDescription} style={editTaskStyles.input}/>
+            <Text style={editTaskStyles.inputTitle}>Edit Priority:</Text>
+            <PickerSelect
+                onValueChange={(value) => setPriority(value)}
+                items={[
+                    { label: "High", value: 1 },
+                    { label: "Medium", value: 2 },
+                    { label: "Low", value: 3 },
+                ]}
+                value={priority}
+                style={editTaskStyles.picker} />
+
+
+            {/* Save Changes button */}
             <TouchableOpacity onPress={updateTask} style={editTaskStyles.button}>
                 <Text style={editTaskStyles.buttonText}>Save Changes</Text>
             </TouchableOpacity>
+
+            {/* Delete task button */}
             <TouchableOpacity onPress={deleteTask}  style={editTaskStyles.deleteButton}>
                 <Text style={editTaskStyles.buttonText}>Delete Task</Text>
             </TouchableOpacity>
@@ -99,6 +126,25 @@ const editTaskStyles = StyleSheet.create({
         justifyContent: 'center',
         elevation: 3,
         marginBottom: 15,
+    },
+    picker: {
+        inputIOS: {
+            fontSize: 18,
+            paddingVertical: 15,
+            paddingHorizontal: 10,
+            borderWidth: 1,
+            borderColor: '#ddd',
+            borderRadius: 10,
+            color: 'black',
+            paddingRight: 30,
+            backgroundColor: '#fff',
+            marginBottom: 15,
+        },
+    },
+    inputTitle: {
+        fontSize: 18,
+        color: '#333',
+        marginBottom: 5,
     },
 });
 
