@@ -89,8 +89,15 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         padding: 20,
         backgroundColor: colors.red,
-        borderRadius: 20,
-        marginBottom: 10,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        // iOS Shadow
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
+        // Android Shadow
+        elevation: 5,
     },
     inputGroup: {
         flexDirection: 'row',

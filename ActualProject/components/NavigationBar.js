@@ -5,7 +5,7 @@ export default function NavigationBar( {navigation} ) {
     return (
         <View style={style.navContainer}>
             <TouchableOpacity 
-                onPress={() => navigation.navigate('Pomodoro Timer')}
+                onPress={() => navigation.navigate('Tomodoro Timer')}
                 style={style.button}>
                     <Text style={style.buttonText}>Timer</Text>
             </TouchableOpacity>

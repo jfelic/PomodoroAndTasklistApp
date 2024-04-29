@@ -124,6 +124,7 @@ const editTaskStyles = StyleSheet.create({
         justifyContent: 'center',
         elevation: 3,
         marginBottom: 15,
+        marginTop: 14,
     },
     buttonText: {
         color: '#fff',

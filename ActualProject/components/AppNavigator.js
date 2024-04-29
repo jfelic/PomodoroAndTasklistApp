@@ -13,7 +13,7 @@ function AppNavigator() {
             screenOptions={{
                 headerBackVisible:false, //Hide the back button in the header
             }}>
-                <Stack.Screen name="Pomodoro Timer" component={PomodoroTimerScreen} />
+                <Stack.Screen name="Tomodoro Timer" component={PomodoroTimerScreen} />
                 <Stack.Screen name='Tasks' component={TaskListScreen} />
                 <Stack.Screen name='Edit Task' component={EditTask} />
         </Stack.Navigator>
