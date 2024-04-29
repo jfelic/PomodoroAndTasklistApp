@@ -5,11 +5,21 @@ import { useFocusEffect } from '@react-navigation/native';
 import NavigationBar from './NavigationBar';
 import PickerSelect from 'react-native-picker-select';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import colors from '../colors';
+
+const priorityColors = {
+    1: colors.red, // High
+    2: colors.orange, // Medium
+    3: colors.green, // Low
+};
 
 const TaskItem = ({ task, onPress }) => {
+    const borderColor = priorityColors[task.priority] || colors.red;
+
     return (
-        <TouchableOpacity onPress={() => onPress(task.id)} style={styles.taskItem}>
-            <Text style={styles.taskText}>{task.priority} - {task.title} - Due: {task.dueDate.toDateString()}</Text>
+        <TouchableOpacity onPress={() => onPress(task.id)} style={[styles.taskItem, { borderColor }]}>
+            <Text style={styles.taskText}>{task.priority} - {task.title}</Text>
+            <Text style={styles.taskText}>Due: {task.dueDate.toDateString()}</Text>
             <Text style={styles.taskText}>{task.description}</Text>
         </TouchableOpacity>
     );
@@ -46,7 +56,7 @@ export default function TaskListScreen({ navigation }) {
     };
 
     const addTask = async () => {
-        const newId = tasks.length + 1; // Simple ID generation strategy. Won't work once delete is implemented
+        const newId = tasks.length + 1;
         const newTask = {
             id: newId,
             title: newTaskTitle,
@@ -60,103 +70,90 @@ export default function TaskListScreen({ navigation }) {
         setTasks(updatedTasks);
         await AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks));
 
-        // Reset input fields after adding a new task
         setNewTaskTitle('');
         setNewTaskDescription('');
         setNewTaskPriority('');
         setNewTaskDueDate(new Date());
     };
 
-    const renderTaskInputFields = () => {
-        return (
-            <View>
-                <Text style={styles.inputTitle}>Title:</Text>
-                <TextInput
-                    textAlign='center'
-                    title="Title:"
-                    value={newTaskTitle}
-                    onChangeText={setNewTaskTitle}
-                    style={styles.input}
-                />
-
-                <Text style={styles.inputTitle}>Description:</Text>
-                <TextInput
-                    textAlign='center'
-                    value={newTaskDescription}
-                    onChangeText={setNewTaskDescription}
-                    style={styles.input}
-                />
-
-                <Text style={styles.inputTitle}>Priority:</Text>
-                <PickerSelect
-                    onValueChange={(value) => setNewTaskPriority(value)}
-                    items={[
-                        {label: "Low", value: 3},
-                        {label: "Medium", value: 2},
-                        {label: "High", value: 1},
-                    ]}
-                    placeholder={{
-                        label: 'Choose priority',
-                        value: null,
-                    }}
-                    style={styles.picker}
-                />
-
-                <View style={styles.dateContainer}>
-                    <Text style={styles.inputTitle}>Choose date: </Text>
-                    <DateTimePicker value={newTaskDueDate} onChange={(event, selectedDate) => setNewTaskDueDate(selectedDate || newTaskDueDate)} />
-                </View>
-
-                <TouchableOpacity onPress={addTask} style={styles.button}>
-                    <Text style={styles.buttonText}>Add Task</Text>
-                </TouchableOpacity>
-            </View>
-        );
-    };
-
     return (
-    <>
+        <>
         <View style={styles.container}>
-            {renderTaskInputFields()}
             <FlatList
                 data={tasks}
                 renderItem={({ item }) => <TaskItem task={item} onPress={handlePress} />}
                 keyExtractor={item => item.id.toString()}
             />
-        </View>
 
-        <View>
-            <NavigationBar navigation={navigation} />
+            <View style={styles.inputContainer}>
+                <Text style={styles.inputTitle}>Title:</Text>
+                <TextInput
+                    style={styles.input}
+                    value={newTaskTitle}
+                    onChangeText={setNewTaskTitle}
+                    placeholder="Enter title"
+                />
+                <Text style={styles.inputTitle}>Description:</Text>
+                <TextInput
+                    style={styles.input}
+                    value={newTaskDescription}
+                    onChangeText={setNewTaskDescription}
+                    placeholder="Enter description"
+                />
+                <Text style={styles.inputTitle}>Priority:</Text>
+                <PickerSelect
+                    onValueChange={setNewTaskPriority}
+                    items={[
+                        { label: "High", value: "1" },
+                        { label: "Medium", value: "2" },
+                        { label: "Low", value: "3" },
+                    ]}
+                    style={styles.picker}
+                />
+                <Text style={styles.inputTitle}>Due Date:</Text>
+                <DateTimePicker
+                    value={newTaskDueDate}
+                    onChange={(event, selectedDate) => setNewTaskDueDate(selectedDate || newTaskDueDate)}
+                    mode="date"
+                />
+                <TouchableOpacity onPress={addTask} style={styles.button}>
+                    <Text style={styles.buttonText}>Add Task</Text>
+                </TouchableOpacity>
+            </View>
         </View>
-    </>
+        <NavigationBar navigation={navigation} />
+        </>
     );
 }
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
         backgroundColor: '#f7f7f7',
     },
+
     taskItem: {
-        backgroundColor: '#fff',
-        padding: 20,
+        padding: 5,
+        borderWidth: 1.35,
         borderRadius: 10,
         marginVertical: 10,
-        marginHorizontal: 20,
+        marginHorizontal: 10,
         elevation: 2,
         shadowOpacity: 0.1,
         shadowRadius: 3,
         shadowColor: '#333',
         shadowOffset: { height: 3, width: 0 },
+        backgroundColor: 'white'
     },
     taskText: {
         fontSize: 18,
-        color: '#333',
+        color: 'black',
     },
     inputTitle: {
         fontSize: 18,
         color: '#333',
-        marginBottom: 5,
+        marginBottom: 10,
     },
     input: {
         backgroundColor: '#fff',
@@ -196,12 +193,9 @@ const styles = StyleSheet.create({
             top: 10,
             right: 15,
         },
-        placeholder: {
-            color: 'gray',
-        },
     },
     button: {
-        backgroundColor: '#0275d8',
+        backgroundColor: colors.green,
         marginTop: 30,
         marginLeft: 30,
         marginRight: 30,
@@ -222,7 +216,4 @@ const styles = StyleSheet.create({
         alignItem: 'center',
         justifyContent: 'space-evenly',
     },
-    dateText: {
-
-    }
 });

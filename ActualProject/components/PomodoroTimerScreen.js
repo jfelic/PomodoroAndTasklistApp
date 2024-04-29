@@ -1,60 +1,116 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, StyleSheet, TextInput, Text, Button } from 'react-native';
 import NavigationBar from './NavigationBar';
 import Timer from './Timer';
+import colors from '../colors'; // Import your color scheme here
+import TomatoIndicator from '../components/TomatoIndicator';
 
-export default function PomodoroTimerScreen({navigation}) {
+export default function PomodoroTimerScreen({ navigation }) {
+    const [workMinutes, setWorkMinutes] = useState(25);
+    const [breakMinutes, setBreakMinutes] = useState(5);
+    const [totalSessions, setTotalSessions] = useState(4);
+    const [completedSessions, setCompletedSessions] = useState(0);
+
+    const completeWorkSession = useCallback(() => {
+        setCompletedSessions((prev) => prev + 1);
+    }, []);
+
+    useEffect(() => {
+        if (completedSessions === totalSessions) {
+            setCompletedSessions(0); // Reset sessions
+        }
+    }, [completedSessions, totalSessions]);
+
+    const handleWorkMinutesChange = (text) => {
+        const minutes = text ? parseInt(text, 10) : '';
+        setWorkMinutes(minutes);
+    };
+
+    const handleBreakMinutesChange = (text) => {
+        const minutes = text ? parseInt(text, 10) : '';
+        setBreakMinutes(minutes);
+    };
+
     return (
-    <View style={{flex: 1,}}>
+        <View style={styles.container}>
+            <TomatoIndicator
+                totalSessions={totalSessions}
+                completedSessions={completedSessions}
+            />
 
-        {/* Timer */}
-        <View style={pomodoroStyles.timerContainer}>
-            <Timer />
+            <View style={styles.timerContainer}>
+                <Timer
+                    workSessionLength={workMinutes * 60}
+                    breakSessionLength={breakMinutes * 60}
+                    onCompleteWorkSession={completeWorkSession}
+                />
+            </View>
+
+            <View style={styles.inputContainer}>
+                <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Work Minutes:</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={workMinutes.toString()}
+                        onChangeText={handleWorkMinutesChange}
+                        keyboardType="number-pad"
+                        placeholder="25"
+                    />
+                </View>
+                <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Break Minutes:</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={breakMinutes.toString()}
+                        onChangeText={handleBreakMinutesChange}
+                        keyboardType="number-pad"
+                        placeholder="5"
+                    />
+                </View>
+            </View>
+
+            <NavigationBar navigation={navigation} />
         </View>
-
-        {/* Nav bar */}
-        <NavigationBar navigation={navigation}/>
-    </View>
     );
 }
 
-// Place this with your other style definitions
-const pomodoroStyles = StyleSheet.create({
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
     timerContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#f7f7f7',
     },
-    timer: {
-        fontSize: 80,
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: 30,
-    },
-    controlButton: {
-        marginHorizontal: 20,
-        backgroundColor: '#fefefe',
+    inputContainer: {
+        flex: 1,
+        justifyContent: 'space-around',
         padding: 20,
-        borderRadius: 50,
+        backgroundColor: colors.red,
+        borderRadius: 20,
+        marginBottom: 10,
+    },
+    inputGroup: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    input: {
         borderWidth: 1,
-        borderColor: '#ddd',
-        elevation: 3,
-        shadowOpacity: 0.3,
-        shadowRadius: 3,
-        shadowColor: '#333',
-        shadowOffset: { height: 1, width: 0 },
+        borderColor: '#CCC', // Light gray border
+        padding: 10,
+        flex: 1,
+        marginLeft: 10,
+        textAlign: 'center',
+        fontSize: 16,
+        borderRadius: 5,
+        backgroundColor: '#FFF', // White background
     },
-    controlButtonText: {
+    label: {
         fontSize: 18,
-        color: '#333',
-    },
-    navBar: {
-        borderTopWidth: 1,
-        borderColor: '#ddd',
-        backgroundColor: '#fefefe',
+        color: '#FFF',
+        fontWeight: 'bold',
     },
 });
-
-// Now, use these styles in your PomodoroTimerScreen
-// Wrap your <Timer /> component with these new styles

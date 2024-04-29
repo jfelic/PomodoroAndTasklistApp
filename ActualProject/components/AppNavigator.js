@@ -8,10 +8,14 @@ const Stack = createNativeStackNavigator();
 
 function AppNavigator() {
     return (
-        <Stack.Navigator initialRouteName='Pomodoro Timer'>
-            <Stack.Screen name="Pomodoro Timer" component={PomodoroTimerScreen} />
-            <Stack.Screen name='Tasks' component={TaskListScreen} />
-            <Stack.Screen name='Edit Task' component={EditTask} />
+        <Stack.Navigator 
+            initialRouteName='Pomodoro Timer' 
+            screenOptions={{
+                headerBackVisible:false, //Hide the back button in the header
+            }}>
+                <Stack.Screen name="Pomodoro Timer" component={PomodoroTimerScreen} />
+                <Stack.Screen name='Tasks' component={TaskListScreen} />
+                <Stack.Screen name='Edit Task' component={EditTask} />
         </Stack.Navigator>
     );
 }

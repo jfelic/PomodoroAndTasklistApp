@@ -1,48 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Importing MaterialIcons
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import colors from '../colors';
 
-const Timer = () => {
-    const [secondsLeft, setSecondsLeft] = useState(1500); // Default Pomodoro time set to 25min
+const Timer = ({ workSessionLength, breakSessionLength, onCompleteWorkSession }) => {
+    const [secondsLeft, setSecondsLeft] = useState(workSessionLength);
     const [isActive, setIsActive] = useState(false);
-    const [timerInterval, setTimerInterval] = useState(null);
+    const [isWorkSession, setIsWorkSession] = useState(true);
 
     useEffect(() => {
-        return () => {
-            if (timerInterval) clearInterval(timerInterval);
-        };
-    }, [timerInterval]);
+        let interval = null;
 
-    const startTimer = () => {
-        if (!isActive && !timerInterval) {
-            const interval = setInterval(() => {
-                setSecondsLeft(seconds => seconds - 1);
+        if (isActive && secondsLeft > 0) {
+            interval = setInterval(() => {
+                setSecondsLeft((seconds) => seconds - 1);
             }, 1000);
-            setTimerInterval(interval);
-            setIsActive(true);
+        } else if (isActive && secondsLeft === 0) {
+            clearInterval(interval);
+            // Toggle session type and call onCompleteWorkSession if it was a work session
+            if (isWorkSession) {
+                onCompleteWorkSession();
+            }
+            setIsWorkSession(!isWorkSession);
+            setSecondsLeft(isWorkSession ? breakSessionLength : workSessionLength);
         }
+
+        return () => clearInterval(interval);
+    }, [isActive, secondsLeft, isWorkSession, workSessionLength, breakSessionLength, onCompleteWorkSession]);
+
+    const handleStartPause = () => {
+        setIsActive(!isActive);
     };
 
-    const pauseTimer = () => {
-        if (timerInterval) {
-            clearInterval(timerInterval);
-            setTimerInterval(null);
-            setIsActive(false);
-        }
-    };
-
-    const resetTimer = () => {
-        if (timerInterval) {
-            clearInterval(timerInterval);
-            setTimerInterval(null);
-        }
-        setSecondsLeft(1500); // Reset to 25 minutes
+    const handleReset = () => {
         setIsActive(false);
+        setIsWorkSession(true);
+        setSecondsLeft(workSessionLength);
     };
 
     const formatTime = () => {
-        const minutes = Math.floor(secondsLeft / 60);
-        const seconds = secondsLeft % 60;
+        let minutes = Math.floor(secondsLeft / 60);
+        let seconds = secondsLeft % 60;
         return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     };
 
@@ -50,18 +48,14 @@ const Timer = () => {
         <View style={styles.container}>
             <Text style={styles.timerText}>{formatTime()}</Text>
             <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button} onPress={startTimer}>
-                    <Icon name="play-arrow" size={30} color="#FFF" />
+                <TouchableOpacity style={styles.button} onPress={handleStartPause}>
+                    <Icon name={isActive ? "pause" : "play-arrow"} size={30} color="#FFF" />
                 </TouchableOpacity>
-
-                <TouchableOpacity style={styles.button} onPress={pauseTimer}>
-                    <Icon name="pause" size={30} color="#FFF" />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.button} onPress={resetTimer}>
+                <TouchableOpacity style={styles.button} onPress={handleReset}>
                     <Icon name="refresh" size={30} color="#FFF" />
                 </TouchableOpacity>
             </View>
+            <Text style={styles.sessionText}>{isWorkSession ? 'Work' : 'Break'}</Text>
         </View>
     );
 };
@@ -74,6 +68,7 @@ const styles = StyleSheet.create({
     },
     timerText: {
         fontSize: 48,
+        color: 'black', // Using red color for the timer text
         marginBottom: 20,
     },
     buttonContainer: {
@@ -82,12 +77,18 @@ const styles = StyleSheet.create({
     },
     button: {
         marginHorizontal: 10,
-        backgroundColor: '#007AFF', // iOS blue button color
+        backgroundColor: colors.red, // Use the red color variable for the buttons
         width: 50, // Circular button
         height: 50, // Circular button
         borderRadius: 25, // Half of the width and height to make it circular
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    sessionText: {
+        marginTop: 20,
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: 'black', // Using red color for the session text
     },
 });
 

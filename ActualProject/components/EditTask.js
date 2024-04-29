@@ -3,6 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PickerSelect from 'react-native-picker-select';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import colors from '../colors';
+import NavigationBar from './NavigationBar';
 
 const EditTask = ({ route, navigation }) => {
     const [isDatePickerVisible, setDatePickerVisible] = useState(false);
@@ -52,6 +54,7 @@ const EditTask = ({ route, navigation }) => {
 
 
     return (
+        <>
         <View style={editTaskStyles.container}>
             {/* Edit title and edit description */}
             <Text style={editTaskStyles.inputTitle}>Edit Title:</Text>
@@ -93,6 +96,8 @@ const EditTask = ({ route, navigation }) => {
                 <Text style={editTaskStyles.buttonText}>Delete Task</Text>
             </TouchableOpacity>
         </View>
+        <NavigationBar navigation={navigation}/>
+        </>
     );
 };
 
@@ -112,7 +117,7 @@ const editTaskStyles = StyleSheet.create({
         marginBottom: 15,
     },
     button: {
-        backgroundColor: '#5cb85c', // Bootstrap's 'btn-success' color
+        backgroundColor: colors.green, 
         padding: 15,
         borderRadius: 10,
         alignItems: 'center',
@@ -126,7 +131,7 @@ const editTaskStyles = StyleSheet.create({
         fontWeight: 'bold',
     },
     deleteButton: {
-        backgroundColor: '#d9534f', // Bootstrap's 'btn-danger' color
+        backgroundColor: colors.red, // Bootstrap's 'btn-danger' color
         padding: 15,
         borderRadius: 10,
         alignItems: 'center',
