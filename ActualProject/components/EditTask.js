@@ -7,7 +7,7 @@ import colors from '../colors';
 import NavigationBar from './NavigationBar';
 
 const EditTask = ({ route, navigation }) => {
-    const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+    const [showDatePicker, setShowDatePicker] = useState(false);
     const { task } = route.params;
 
     const [title, setTitle] = useState(task.title);
@@ -15,13 +15,19 @@ const EditTask = ({ route, navigation }) => {
     const [priority, setPriority] = useState(task.priority);
     const [dueDate, setDueDate] = useState(new Date(task.dueDate));
 
+    const onDateChange = (event, selectedDate) => {
+        setShowDatePicker(false);
+        if (selectedDate) {
+            setDueDate(selectedDate);
+        }
+    };
+
     const updateTask = async () => {
         try {
             const savedTasks = await AsyncStorage.getItem('tasks');
             let tasks = savedTasks ? JSON.parse(savedTasks) : [];
             const taskIndex = tasks.findIndex(t => t.id === task.id);
 
-            // Update task details
             const updatedTask = {
                 ...tasks[taskIndex],
                 title: title,
@@ -46,23 +52,21 @@ const EditTask = ({ route, navigation }) => {
             const filteredTasks = tasks.filter(t => t.id !== task.id);
 
             await AsyncStorage.setItem('tasks', JSON.stringify(filteredTasks));
-            navigation.goBack();  // Navigate back after deleting
+            navigation.goBack();
         } catch (error) {
             console.error('Failed to delete the task:', error);
         }
     };
 
-
     return (
         <>
         <View style={editTaskStyles.container}>
-            {/* Edit title and edit description */}
             <Text style={editTaskStyles.inputTitle}>Edit Title:</Text>
             <TextInput value={title} onChangeText={setTitle} style={editTaskStyles.input}/>
+            
             <Text style={editTaskStyles.inputTitle}>Edit Description:</Text>
-
-            {/* Edit priority */}
             <TextInput value={description} onChangeText={setDescription} style={editTaskStyles.input}/>
+            
             <Text style={editTaskStyles.inputTitle}>Edit Priority:</Text>
             <PickerSelect
                 onValueChange={(value) => setPriority(value)}
@@ -74,24 +78,25 @@ const EditTask = ({ route, navigation }) => {
                 value={priority}
                 style={editTaskStyles.picker} />
 
-            {/* Edit date */}
             <Text style={editTaskStyles.inputTitle}>Edit date:</Text>
-            <DateTimePicker
-                testID="dateTimePicker"
-                value={dueDate}
-                mode="date"
-                display="default"
-                onChange={(event, selectedDate) => {
-                    setDueDate(selectedDate || dueDate);
-                }}
-            />
+            <TouchableOpacity 
+                style={editTaskStyles.input} 
+                onPress={() => setShowDatePicker(true)}
+            >
+                <Text>{dueDate.toDateString()}</Text>
+            </TouchableOpacity>
+            {showDatePicker && (
+                <DateTimePicker
+                    value={dueDate}
+                    mode="date"
+                    onChange={onDateChange}
+                />
+            )}
 
-            {/* Save Changes button */}
             <TouchableOpacity onPress={updateTask} style={editTaskStyles.button}>
                 <Text style={editTaskStyles.buttonText}>Save Changes</Text>
             </TouchableOpacity>
 
-            {/* Delete task button */}
             <TouchableOpacity onPress={deleteTask}  style={editTaskStyles.deleteButton}>
                 <Text style={editTaskStyles.buttonText}>Delete Task</Text>
             </TouchableOpacity>
@@ -132,7 +137,7 @@ const editTaskStyles = StyleSheet.create({
         fontWeight: 'bold',
     },
     deleteButton: {
-        backgroundColor: colors.red, // Bootstrap's 'btn-danger' color
+        backgroundColor: colors.red,
         padding: 15,
         borderRadius: 10,
         alignItems: 'center',
