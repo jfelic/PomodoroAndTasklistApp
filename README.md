@@ -46,10 +46,16 @@ npx expo start
 - Full task list view with priority-based visual organization
 
 ## Screenshots
-<img src="ActualProject/screenshots/timer_screen.png" width="300" height="600"/>
-<img src="ActualProject/screenshots/tasks_list.png" width="300" height="600"/>
-<img src="ActualProject/screenshots/add_task.png" width="300" height="600"/>
-<img src="ActualProject/screenshots/edit_task.png" width="300" height="600"/>
+<table>
+  <tr>
+    <td><img src="ActualProject/screenshots/timer_screen.png" width="275" height="550"/></td>
+    <td><img src="ActualProject/screenshots/tasks_list.png" width="275" height="550"/></td>
+  </tr>
+  <tr>
+    <td><img src="ActualProject/screenshots/add_task.png" width="275" height="550"/></td>
+    <td><img src="ActualProject/screenshots/edit_task.png" width="275" height="550"/></td>
+  </tr>
+</table>
 
 
 ## Technologies Used
